@@ -36,7 +36,7 @@ attr_reader :id
   def self.all()
     sql = "SELECT * FROM customers"
     customers = SqlRunner.run(sql)
-    result = customers.map { |person| Customer.new(person) }
+    result = Customer.map_items(customers)
     return result
   end
 
@@ -45,5 +45,13 @@ attr_reader :id
     SqlRunner.run(sql)
   end
 
+  def self.map_items(customer_data)
+    result = customer_data.map { |person| Customer.new( person ) }
+    return result
+  end
+
+  # def films
+  #
+  # end
 
 end
