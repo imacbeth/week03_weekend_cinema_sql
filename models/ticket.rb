@@ -38,7 +38,7 @@ class Ticket
   def self.all()
       sql = "SELECT * FROM tickets"
       tickets = SqlRunner.run(sql)
-      result = Ticket.map_items(tickets) 
+      result = Ticket.map_items(tickets)
       return result
   end
 
@@ -50,6 +50,24 @@ class Ticket
   def self.map_items(ticket_data)
     result = ticket_data.map { |ticket| Ticket.new( ticket ) }
     return result
+  end
+
+  def film
+    sql = "SELECT *
+    FROM films
+    WHERE id = $1"
+    values = [@film_id]
+    film = SqlRunner.run(sql, values).first
+    return Film.new(film)
+  end
+
+  def customer
+    sql = "SELECT *
+    FROM customers
+    WHERE id = $1"
+    values = [@customer_id]
+    customer = SqlRunner.run(sql, values).first
+    return Customer.new(customer)
   end
 
 end
