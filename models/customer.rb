@@ -46,12 +46,19 @@ attr_reader :id
   end
 
   def self.map_items(customer_data)
-    result = customer_data.map { |person| Customer.new( person ) }
+    result = customer_data.map { |person| Customer.new(person) }
     return result
   end
-  #
-  # def films
-  #
-  # end
+
+  def films
+    sql = "SELECT films.*
+    FROM films
+    INNER JOIN tickets
+    ON tickets.film_id = films.id
+    WHERE customer_id = $1"
+    values = [@id]
+    film_data = SqlRunner.run(sql, values)
+    return Film.map_items(film_data)
+  end
 
 end
