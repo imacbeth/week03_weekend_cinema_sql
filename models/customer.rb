@@ -78,6 +78,7 @@ attr_reader :id
     return tickets_count
   end
 
+
   def buy_ticket(film)
     @funds -= film.price()
     Customer.update(@name, @funds)
