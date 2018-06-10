@@ -1,4 +1,6 @@
 require_relative( '../db/sql_runner' )
+require_relative('./film.rb')
+require_relative('./ticket.rb')
 
 class Customer
 
@@ -20,9 +22,8 @@ attr_reader :id
     @id = result[0]['id'].to_i
   end
 
-
   def update
-    sql = "UPDATE customers SET name = $1, funds = $2 WHERE id = $3"
+    sql = "UPDATE customers SET (name, funds) = ($1, $2) WHERE id = $3"
     values = [@name, @funds, @id]
     SqlRunner.run(sql, values)
   end
@@ -59,6 +60,29 @@ attr_reader :id
     values = [@id]
     film_data = SqlRunner.run(sql, values)
     return Film.map_items(film_data)
+  end
+
+  def check_funds
+    sql = "SELECT funds FROM customers WHERE id = $1"
+    values = [@id]
+    funds = SqlRunner.run(sql, values)
+    return funds
+  end
+
+  def tickets_bought()
+    sql = "SELECT tickets.*
+    FROM tickets
+    WHERE customer_id = $1"
+    values = [@id]
+    tickets_count = SqlRunner.run(sql, values).count
+    return tickets_count
+  end
+
+  def buy_ticket(film)
+    @funds -= film.price()
+    Customer.update(@name, @funds)
+    ticket = Ticket.new({'customer id' => @id, 'film_id' => film.id})
+    ticket.save()
   end
 
 end
